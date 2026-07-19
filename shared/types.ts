@@ -12,7 +12,7 @@ export const PRODUCT_CATEGORIES = [
 ] as const;
 
 export type ProductCategory = (typeof PRODUCT_CATEGORIES)[number];
-export type ProductKind =
+type ProductKind =
   | "retail_packaged"
   | "raw_food"
   | "foodservice"
@@ -20,8 +20,8 @@ export type ProductKind =
   | "recipe"
   | "supplement";
 export type EvidenceStatus = "missing" | "unverified" | "verified" | "conflict";
-export type Confidence = "low" | "medium" | "high";
-export type TriState = true | false | null;
+type Confidence = "low" | "medium" | "high";
+type TriState = true | false | null;
 
 export interface NutritionPer100g {
   calories: number | null;
@@ -59,7 +59,7 @@ export interface AllergenDeclaration {
   declaration: "contains" | "may_contain" | "source_tag";
 }
 
-export interface IngredientEvidence {
+interface IngredientEvidence {
   raw: string | null;
   language: string | null;
   normalized: NormalizedIngredient[];
@@ -91,7 +91,7 @@ export interface StagedOffer {
   observedAt: string;
 }
 
-export interface StagedRating {
+interface StagedRating {
   retailer: string;
   retailerListingId: string;
   stars: number;

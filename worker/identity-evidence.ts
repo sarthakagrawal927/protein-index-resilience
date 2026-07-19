@@ -82,16 +82,6 @@ export async function currentIdentityEvidenceDecision(
   return row ? decisionFromRow(row) : null;
 }
 
-export async function identityEvidenceDispositionForDatabase(
-  db: D1Database,
-  decision: IdentityEvidenceDecision,
-): Promise<IdentityEvidenceDecisionDisposition> {
-  return identityEvidenceDecisionDisposition(
-    await currentIdentityEvidenceDecision(db, decision),
-    decision,
-  );
-}
-
 export function identityEvidenceWriteStatements(
   db: D1Database,
   decision: IdentityEvidenceDecision,

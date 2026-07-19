@@ -1,7 +1,6 @@
 import type {
   AllergenDeclaration,
   EvidenceStatus,
-  MetricResult,
   NormalizedIngredient,
   NutritionPer100g,
   ProductCategory,
@@ -9,17 +8,9 @@ import type {
 } from "./types";
 import type { ReviewedNutritionProjection, SelectedNutritionProjection } from "./evidence-decisions";
 
-export interface ApiErrorBody {
-  error: {
-    code: "validation_error" | "not_found" | "conflict" | "mutations_disabled" | "internal_error";
-    message: string;
-    details?: Record<string, unknown>;
-  };
-}
-
 export type NutritionEvidenceStatus = EvidenceStatus | "machine_verified";
 
-export type ConsumerMetrics = Pick<ProductMetrics,
+type ConsumerMetrics = Pick<ProductMetrics,
   | "proteinPer100Calories"
   | "proteinCaloriePercentage"
   | "caloriesFor25gProtein"
@@ -130,7 +121,7 @@ export interface ReviewItem {
   decidedBy: string | null;
 }
 
-export interface NutritionReviewChange {
+interface NutritionReviewChange {
   field: keyof NutritionPer100g;
   originalValue: number | null;
   reviewedValue: number | null;
@@ -223,9 +214,9 @@ export type CompletionLane =
   | "source_evidence_needed";
 export type CompletionLaneFilter = CompletionLane | "all";
 export type TerminalUnavailableOutcome = "not_applicable" | "not_declared";
-export type ExtractionLabelOutcome = "candidate" | "no_prediction" | "rejected" | "failed";
+type ExtractionLabelOutcome = "candidate" | "no_prediction" | "rejected" | "failed";
 
-export interface CompletionExtractionSummary {
+interface CompletionExtractionSummary {
   labels: number;
   candidate: number;
   noPrediction: number;
@@ -336,5 +327,3 @@ export interface HealthResponse {
   sourceComplete: boolean | null;
   mutations: "local_only";
 }
-
-export const unavailableMetric: MetricResult = { value: null, reason: "missing_inputs" };

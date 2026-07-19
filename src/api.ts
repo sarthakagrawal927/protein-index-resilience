@@ -20,7 +20,7 @@ import type {
 } from "../shared/terminal-evidence";
 import { isTerminalEvidenceErrorCode } from "../shared/terminal-evidence";
 
-export class ApiRequestError extends Error {
+class ApiRequestError extends Error {
   constructor(
     message: string,
     readonly status: number,

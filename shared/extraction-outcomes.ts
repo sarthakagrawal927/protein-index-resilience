@@ -1,9 +1,9 @@
-export const EXTRACTION_FIELD_FAMILIES = ["nutrition", "ingredients"] as const;
-export const EXTRACTION_OUTCOME_STATUSES = ["candidate", "no_prediction", "rejected", "failed"] as const;
-export const EXTRACTION_LABEL_ROLES = ["requested", "prediction"] as const;
+const EXTRACTION_FIELD_FAMILIES = ["nutrition", "ingredients"] as const;
+const EXTRACTION_OUTCOME_STATUSES = ["candidate", "no_prediction", "rejected", "failed"] as const;
+const EXTRACTION_LABEL_ROLES = ["requested", "prediction"] as const;
 export const EXTRACTION_RESIDUAL_EXCEPTION_MAX_COUNT = 10;
 export const EXTRACTION_RESIDUAL_EXCEPTION_MAX_RATE = 0.0025;
-export const EXTRACTION_RESIDUAL_EXCEPTION_REASONS = [
+const EXTRACTION_RESIDUAL_EXCEPTION_REASONS = [
   "label_declared_size_exceeded",
   "label_fetch_failed",
   "label_http_error",
@@ -16,7 +16,7 @@ export const EXTRACTION_RESIDUAL_EXCEPTION_REASONS = [
 
 export type ExtractionFieldFamily = (typeof EXTRACTION_FIELD_FAMILIES)[number];
 export type ExtractionOutcomeStatus = (typeof EXTRACTION_OUTCOME_STATUSES)[number];
-export type ExtractionLabelRole = (typeof EXTRACTION_LABEL_ROLES)[number];
+type ExtractionLabelRole = (typeof EXTRACTION_LABEL_ROLES)[number];
 export type ExtractionResidualExceptionReason = (typeof EXTRACTION_RESIDUAL_EXCEPTION_REASONS)[number];
 
 export interface ExtractionAccountingSummary {

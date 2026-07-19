@@ -1,7 +1,7 @@
-export const TERMINAL_EVIDENCE_FIELD_FAMILIES = ["nutrition", "ingredients"] as const;
-export const TERMINAL_UNAVAILABLE_OUTCOMES = ["not_declared", "not_applicable"] as const;
-export const TERMINAL_EVIDENCE_KINDS = ["source", "label"] as const;
-export const TERMINAL_EVIDENCE_ERROR_CODES = [
+const TERMINAL_EVIDENCE_FIELD_FAMILIES = ["nutrition", "ingredients"] as const;
+const TERMINAL_UNAVAILABLE_OUTCOMES = ["not_declared", "not_applicable"] as const;
+const TERMINAL_EVIDENCE_KINDS = ["source", "label"] as const;
+const TERMINAL_EVIDENCE_ERROR_CODES = [
   "validation_error",
   "not_found",
   "stale_evidence",
@@ -11,7 +11,7 @@ export const TERMINAL_EVIDENCE_ERROR_CODES = [
 
 export type TerminalEvidenceFieldFamily = (typeof TERMINAL_EVIDENCE_FIELD_FAMILIES)[number];
 export type TerminalUnavailableOutcome = (typeof TERMINAL_UNAVAILABLE_OUTCOMES)[number];
-export type TerminalEvidenceKind = (typeof TERMINAL_EVIDENCE_KINDS)[number];
+type TerminalEvidenceKind = (typeof TERMINAL_EVIDENCE_KINDS)[number];
 export type TerminalEvidenceErrorCode = (typeof TERMINAL_EVIDENCE_ERROR_CODES)[number];
 
 export interface TerminalEvidenceListQuery {
@@ -97,7 +97,7 @@ export interface TerminalEvidenceHistoryEntry {
   superseded: boolean;
 }
 
-export interface TerminalEvidenceContradiction {
+interface TerminalEvidenceContradiction {
   hasConflict: boolean;
   outcomes: TerminalUnavailableOutcome[];
   factStatus: "verified" | "conflict" | null;
@@ -176,7 +176,7 @@ function timestamp(value: unknown, field: string, errors: string[]): value is st
   return true;
 }
 
-export function validateTerminalEvidenceBinding(value: unknown): string[] {
+function validateTerminalEvidenceBinding(value: unknown): string[] {
   const errors: string[] = [];
   const root = record(value);
   const kind = root?.kind;
