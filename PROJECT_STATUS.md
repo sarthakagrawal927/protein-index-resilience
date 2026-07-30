@@ -53,6 +53,9 @@ the strict terminal-evidence gate above is actually satisfied.
 
 ## Timeline
 
+- 2026-07-30 — made the canonical GitHub repository publicly readable. This
+  changes source visibility only; it does not publish private R2 data, local
+  evidence artifacts, credentials, or a project-wide software license.
 - 2026-07-19 — the macro-first dashboard checkpoint was merged to `main` and deployed to the existing `protein-index` Worker as version `35c35014-bc15-433e-8d11-82c357566099`. Live browser verification confirmed default `Protein / 100 kcal` ordering, direct protein/carbs/fat/fibre/calories on catalog cards, and a concise product drawer containing only identity, macros, and protein density. The completed OpenSpec change is archived.
 - 2026-07-19 — the free local official-label pass produced four source-bound Qwen v13 nutrition facts after its five-fixture benchmark passed; they were applied only to local D1. The rendered discovery catalog remains 2,079 active products and now has 259 marketed-protein foods with comparable calories-plus-protein nutrition. Seventy-three labels that timed out and eleven that failed corroboration remain unpublished.
 - 2026-07-19 — local, no-cost dashboard validation combines the complete Open Food Facts snapshot with 16 source-complete official-brand snapshots: 2,079 active canonical records, 1,607 marketed-protein products, and 255 calories-plus-protein comparisons render correctly with default `Protein / 100 kcal` ordering and product search. No local artifact or machine-label result was published to production. Machine-label adapter v13 now accepts only OCR/model pairs corroborated by the visible nutrition row, including rounded serving-to-100-g conversions, multi-column tables, and parenthesized serving masses.
@@ -218,6 +221,9 @@ the strict terminal-evidence gate above is actually satisfied.
 ## Products
 
 - `protein-index` web application and Worker API — deployed on Cloudflare at `https://protein.significanthobbies.com`
+- Public source and roadmap —
+  [`Significant-Hobbies/protein-index-resilience`](https://github.com/Significant-Hobbies/protein-index-resilience)
+  and [GitHub Issues](https://github.com/Significant-Hobbies/protein-index-resilience/issues)
 - Offline Open Food Facts ingestion and reconciliation CLI — implemented
 - Weekly/manual Open Food Facts source-sync workflow — implemented; first full continuity baseline completed in GitHub Actions run `29419259301`
 

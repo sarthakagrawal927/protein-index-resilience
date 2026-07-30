@@ -20,6 +20,9 @@ The dashboard has two explicit evidence boundaries:
 Missing values stay missing. Open Food Facts values are never promoted to
 label-verified facts merely because they parse successfully.
 
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the source-data and
+service licenses that apply independently of this repository's visibility.
+
 ## Local development
 
 Requirements: Node.js 22+ and pnpm 10.
