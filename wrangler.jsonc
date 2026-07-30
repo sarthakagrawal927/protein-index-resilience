@@ -13,7 +13,9 @@
       "/llms.txt",
       "/llms-full.txt",
       "/index.md",
-      "/sitemap.xml"
+      "/sitemap.xml",
+      "/sitemaps/*",
+      "/products/*"
     ]
   },
   "d1_databases": [

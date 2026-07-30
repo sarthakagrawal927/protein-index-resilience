@@ -346,7 +346,7 @@ function ingredientTree(rows: IngredientRow[], parentId: string | null = null): 
 }
 
 export async function getProductDetail(db: D1Database, id: string): Promise<ProductDetailResponse | null> {
-  const productStatement = db.prepare(`${SELECT_PRODUCT} WHERE p.id = ?`).bind(id);
+  const productStatement = db.prepare(`${SELECT_PRODUCT} WHERE p.id = ? AND p.is_active = 1`).bind(id);
   const statements = [
     productStatement,
     db.prepare("SELECT id, source_id, source_record_id, source_url, observed_at, resolution_rule FROM source_records WHERE product_id = ? ORDER BY observed_at DESC").bind(id),

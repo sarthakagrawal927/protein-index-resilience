@@ -3,11 +3,20 @@ import type { ReviewDecision, ReviewStatus, ReviewType } from "../shared/api";
 import {
   INDEX_MD,
   LLMS_TXT,
-  SITEMAP_XML,
   buildApiAiCatalog,
+  buildLlmsFullTxt,
+  productToHtml,
   productToMarkdown,
 } from "./agent-index";
 import { getProductDetail, searchProducts, validateSearch } from "./catalog";
+import {
+  PRODUCT_SITEMAP_PAGE_SIZE,
+  buildProductSitemap,
+  buildSitemapIndex,
+  buildStaticSitemap,
+  countActiveProducts,
+  listActiveProductIds,
+} from "./public-routes";
 import {
   getCompletionLabels,
   getCompletionLedger,
@@ -42,22 +51,79 @@ function text(body: string, type: string, status = 200) {
 // --- Agent / LLM indexing (must win over SPA asset fallback) ---
 app.get("/llms.txt", (c) => text(LLMS_TXT, "text/plain; charset=utf-8"));
 app.get("/index.md", (c) => text(INDEX_MD, "text/markdown; charset=utf-8"));
-app.get("/sitemap.xml", (c) => text(SITEMAP_XML, "application/xml; charset=utf-8"));
-app.get("/api/ai", (c) => {
+app.get("/llms-full.txt", async (c) => {
+  const count = await countActiveProducts(c.env.DB);
   const origin = new URL(c.req.url).origin;
-  return c.json(buildApiAiCatalog(origin));
+  return text(buildLlmsFullTxt(count, origin), "text/plain; charset=utf-8");
 });
-app.get("/api/products/:id{[^/]+\\.md}", async (c) => {
-  const pathId = c.req.param("id") ?? "";
-  const id = pathId.endsWith(".md") ? pathId.slice(0, -3) : "";
-  const product = await getProductDetail(c.env.DB, id);
+app.get("/sitemap.xml", async (c) => {
+  const count = await countActiveProducts(c.env.DB);
+  return text(
+    buildSitemapIndex(count, new URL(c.req.url).origin),
+    "application/xml; charset=utf-8",
+  );
+});
+app.get("/sitemaps/static.xml", (c) =>
+  text(
+    buildStaticSitemap(new URL(c.req.url).origin),
+    "application/xml; charset=utf-8",
+  ));
+app.get("/sitemaps/:file", async (c) => {
+  const match = /^products-([1-9][0-9]*)\.xml$/.exec(c.req.param("file"));
+  if (!match?.[1]) {
+    return text("Sitemap shard not found.\n", "text/plain; charset=utf-8", 404);
+  }
+  const page = Number(match[1]);
+  const count = await countActiveProducts(c.env.DB);
+  const shardCount = Math.ceil(count / PRODUCT_SITEMAP_PAGE_SIZE);
+  if (!Number.isInteger(page) || page < 1 || page > shardCount) {
+    return text("Sitemap shard not found.\n", "text/plain; charset=utf-8", 404);
+  }
+  const ids = await listActiveProductIds(c.env.DB, page);
+  return text(
+    buildProductSitemap(ids, new URL(c.req.url).origin),
+    "application/xml; charset=utf-8",
+  );
+});
+app.get("/api/ai", async (c) => {
+  const origin = new URL(c.req.url).origin;
+  const count = await countActiveProducts(c.env.DB);
+  return c.json(buildApiAiCatalog(origin, count));
+});
+async function productMarkdownResponse(db: D1Database, id: string, origin: string) {
+  const product = await getProductDetail(db, id);
   if (!product) {
     return text("# Not found\n\nProduct not found.\n", "text/markdown; charset=utf-8", 404);
   }
   return text(
-    productToMarkdown(product as unknown as Record<string, unknown>),
-    "text/markdown; charset=utf-8"
+    productToMarkdown(product, origin),
+    "text/markdown; charset=utf-8",
   );
+}
+
+app.get("/products/:id{[^/]+\\.md}", async (c) => {
+  const pathId = c.req.param("id") ?? "";
+  const id = pathId.endsWith(".md") ? pathId.slice(0, -3) : "";
+  return productMarkdownResponse(c.env.DB, id, new URL(c.req.url).origin);
+});
+app.get("/products/:id", async (c) => {
+  const product = await getProductDetail(c.env.DB, c.req.param("id"));
+  if (!product) {
+    return text(
+      "<!doctype html><html lang=\"en\"><head><meta name=\"robots\" content=\"noindex\"><title>Product not found | Protein Index</title></head><body><main><h1>Product not found</h1><p><a href=\"/\">Browse the active catalog</a>.</p></main></body></html>",
+      "text/html; charset=utf-8",
+      404,
+    );
+  }
+  return text(
+    productToHtml(product, new URL(c.req.url).origin),
+    "text/html; charset=utf-8",
+  );
+});
+app.get("/api/products/:id{[^/]+\\.md}", async (c) => {
+  const pathId = c.req.param("id") ?? "";
+  const id = pathId.endsWith(".md") ? pathId.slice(0, -3) : "";
+  return productMarkdownResponse(c.env.DB, id, new URL(c.req.url).origin);
 });
 
 app.get("/api/health", async (c) => {

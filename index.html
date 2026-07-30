@@ -9,12 +9,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Source-aware Indian protein product intelligence."
+      content="Compare protein foods sold in India with source-aware nutrition, ingredient evidence, completeness status, and explicit trust boundaries."
     />
-    <title>Protein Index</title>
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <link rel="canonical" href="https://protein.significanthobbies.com/" />
+    <link
+      rel="alternate"
+      type="text/markdown"
+      href="https://protein.significanthobbies.com/index.md"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Protein Index" />
+    <meta property="og:title" content="Protein Index — Evidence-aware food comparison" />
+    <meta
+      property="og:description"
+      content="Compare protein foods sold in India without treating missing or unverified nutrition as label-confirmed evidence."
+    />
+    <meta property="og:url" content="https://protein.significanthobbies.com/" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Protein Index — Evidence-aware food comparison" />
+    <meta
+      name="twitter:description"
+      content="Source-aware nutrition and ingredient evidence for protein foods sold in India."
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebApplication",
+            "name": "Protein Index",
+            "url": "https://protein.significanthobbies.com/",
+            "applicationCategory": "HealthApplication",
+            "operatingSystem": "Web browser",
+            "description": "Source-aware comparison of protein foods sold in India."
+          },
+          {
+            "@type": "Dataset",
+            "name": "Protein Index public catalog",
+            "url": "https://protein.significanthobbies.com/",
+            "description": "An incomplete, source-aware catalog of active protein food records with explicit nutrition and ingredient evidence status.",
+            "isAccessibleForFree": true
+          }
+        ]
+      }
+    </script>
+    <title>Protein Index — Evidence-aware food comparison</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <main>
+        <h1>Compare protein foods with the evidence attached</h1>
+        <p>
+          Protein Index is a source-aware catalog of foods sold in India. It
+          separates verified label evidence from discovery data and makes
+          incomplete records visible.
+        </p>
+        <h2>What you can compare</h2>
+        <p>
+          Browse active products by identity, nutrition status, ingredients,
+          protein density, and catalog completeness. Missing values are not
+          zero, and unverified values are not label-confirmed.
+        </p>
+        <h2>How to interpret the catalog</h2>
+        <p>
+          Protein Index is not a complete market census or medical advice.
+          Every product page links to an equivalent Markdown record and the
+          public JSON API.
+        </p>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

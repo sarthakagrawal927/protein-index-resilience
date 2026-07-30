@@ -3,11 +3,13 @@ Allow: /
 
 # Agent / LLM indexing surfaces are public
 Allow: /llms.txt
+Allow: /llms-full.txt
 Allow: /index.md
 Allow: /api/ai
 Allow: /api/health
 Allow: /api/coverage
 Allow: /api/products
+Allow: /products/
+Allow: /sitemaps/
 
 Sitemap: https://protein.significanthobbies.com/sitemap.xml
-Allow: /llms-full.txt

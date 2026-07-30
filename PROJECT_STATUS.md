@@ -1,6 +1,6 @@
 # Protein Index — PROJECT STATUS
 
-Last updated: 2026-07-19
+Last updated: 2026-07-31
 
 ## Why / What
 
@@ -53,6 +53,14 @@ the strict terminal-evidence gate above is actually satisfied.
 
 ## Timeline
 
+- 2026-07-31 — completed and locally validated a source-only public indexing
+  change that defines two canonical route templates: the homepage and one
+  server-rendered detail page for every active D1 product. The same route
+  contract produces equivalent Markdown, an exact runtime `/api/ai` collection
+  count, and a bounded sitemap index with 5,000-product shards. The full
+  repository check, docs validation, focused route parity tests, and strict
+  OpenSpec validation pass. Production remains unchanged pending review, merge,
+  and an explicitly authorized manual deploy.
 - 2026-07-30 — made the canonical GitHub repository publicly readable. This
   changes source visibility only; it does not publish private R2 data, local
   evidence artifacts, credentials, or a project-wide software license.
