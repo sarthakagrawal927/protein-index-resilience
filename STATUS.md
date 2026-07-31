@@ -4,7 +4,7 @@
 > [`PROJECT_STATUS.md`](PROJECT_STATUS.md). Update this file each working
 > session; update `PROJECT_STATUS.md` when PR-sized work completes.
 
-Last updated: 2026-07-19
+Last updated: 2026-08-01
 
 ## Current objective
 
@@ -16,6 +16,10 @@ the rendered dashboard passes desktop/mobile verification.
 
 ## Active work
 
+- Public discovery coverage is complete locally: every active product has a
+  canonical HTML route and equivalent Markdown representation, while runtime
+  sitemap and `/api/ai` output derive from the same active inventory. No data
+  was published and no deployment was performed.
 - Machine-verified label lane (`automated-label-verification` OpenSpec change):
   complete and published through protected workflow run `29653810942`. Three
   current first-party Protein Chef labels plus four serving-normalized Yoga Bar

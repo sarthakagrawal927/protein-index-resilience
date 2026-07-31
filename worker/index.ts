@@ -3,8 +3,11 @@ import type { ReviewDecision, ReviewStatus, ReviewType } from "../shared/api";
 import {
   INDEX_MD,
   LLMS_TXT,
-  SITEMAP_XML,
   buildApiAiCatalog,
+  buildSitemapXml,
+  isActivePublicProduct,
+  listPublicProductRoutes,
+  productToHtml,
   productToMarkdown,
 } from "./agent-index";
 import { getProductDetail, searchProducts, validateSearch } from "./catalog";
@@ -42,10 +45,32 @@ function text(body: string, type: string, status = 200) {
 // --- Agent / LLM indexing (must win over SPA asset fallback) ---
 app.get("/llms.txt", (c) => text(LLMS_TXT, "text/plain; charset=utf-8"));
 app.get("/index.md", (c) => text(INDEX_MD, "text/markdown; charset=utf-8"));
-app.get("/sitemap.xml", (c) => text(SITEMAP_XML, "application/xml; charset=utf-8"));
-app.get("/api/ai", (c) => {
+app.get("/sitemap.xml", async (c) => {
   const origin = new URL(c.req.url).origin;
-  return c.json(buildApiAiCatalog(origin));
+  return text(buildSitemapXml(await listPublicProductRoutes(c.env.DB), origin), "application/xml; charset=utf-8");
+});
+app.get("/api/ai", async (c) => {
+  const origin = new URL(c.req.url).origin;
+  return c.json(buildApiAiCatalog(await listPublicProductRoutes(c.env.DB), origin));
+});
+app.get("/products/:id{[^/]+\\.md}", async (c) => {
+  const pathId = c.req.param("id") ?? "";
+  const id = pathId.endsWith(".md") ? pathId.slice(0, -3) : "";
+  if (!(await isActivePublicProduct(c.env.DB, id))) {
+    return text("# Not found\n\nProduct not found.\n", "text/markdown; charset=utf-8", 404);
+  }
+  const product = await getProductDetail(c.env.DB, id);
+  if (!product) return text("# Not found\n\nProduct not found.\n", "text/markdown; charset=utf-8", 404);
+  return text(productToMarkdown(product as unknown as Record<string, unknown>, new URL(c.req.url).origin), "text/markdown; charset=utf-8");
+});
+app.get("/products/:id", async (c) => {
+  const id = c.req.param("id");
+  if (!(await isActivePublicProduct(c.env.DB, id))) {
+    return text("<!doctype html><title>Product not found</title><h1>Product not found</h1>", "text/html; charset=utf-8", 404);
+  }
+  const product = await getProductDetail(c.env.DB, id);
+  if (!product) return text("<!doctype html><title>Product not found</title><h1>Product not found</h1>", "text/html; charset=utf-8", 404);
+  return text(productToHtml(product as unknown as Record<string, unknown>, new URL(c.req.url).origin), "text/html; charset=utf-8");
 });
 app.get("/api/products/:id{[^/]+\\.md}", async (c) => {
   const pathId = c.req.param("id") ?? "";
@@ -55,7 +80,7 @@ app.get("/api/products/:id{[^/]+\\.md}", async (c) => {
     return text("# Not found\n\nProduct not found.\n", "text/markdown; charset=utf-8", 404);
   }
   return text(
-    productToMarkdown(product as unknown as Record<string, unknown>),
+    productToMarkdown(product as unknown as Record<string, unknown>, new URL(c.req.url).origin),
     "text/markdown; charset=utf-8"
   );
 });

@@ -2385,4 +2385,63 @@ describe("Worker catalog API", () => {
     expect(afterCoverage.catalog.verifiedNutrition).toBe(beforeCoverage.catalog.verifiedNutrition - 1);
     expect(afterCoverage.catalog.unverifiedNutrition).toBe(beforeCoverage.catalog.unverifiedNutrition + 1);
   });
+
+  it("keeps active product HTML, Markdown, sitemap, and agent catalog in parity", async () => {
+    const activeProducts = await env.DB.prepare(
+      "SELECT id, name FROM products WHERE is_active = 1 ORDER BY id",
+    ).all<{ id: string; name: string }>();
+    const active = activeProducts.results[0];
+    if (!active) throw new Error("Expected an active product");
+    const encodedId = encodeURIComponent(active.id);
+
+    const htmlResponse = await worker.fetch(`http://localhost/products/${encodedId}`);
+    expect(htmlResponse.status).toBe(200);
+    expect(htmlResponse.headers.get("content-type")).toContain("text/html");
+    const html = await htmlResponse.text();
+    expect(html).toContain(active.name.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;"));
+    expect(html).toContain(`http://localhost/products/${encodedId}`);
+    expect(html).toContain('type="application/ld+json"');
+    expect(html).not.toContain("openReviewCount");
+    expect(html).not.toContain("sourceRecords");
+
+    const markdownResponse = await worker.fetch(`http://localhost/products/${encodedId}.md`);
+    expect(markdownResponse.status).toBe(200);
+    expect(markdownResponse.headers.get("content-type")).toContain("text/markdown");
+    const markdown = await markdownResponse.text();
+    expect(markdown).toContain(`# ${active.name}`);
+    expect(markdown).toContain(`Canonical URL: http://localhost/products/${encodedId}`);
+    expect(markdown).not.toContain("openReviewCount");
+
+    const compatibilityResponse = await worker.fetch(`http://localhost/api/products/${encodedId}.md`);
+    expect(compatibilityResponse.status).toBe(200);
+    expect(await compatibilityResponse.text()).toContain(`Canonical URL: http://localhost/products/${encodedId}`);
+
+    const catalogResponse = await worker.fetch("http://localhost/api/ai");
+    const catalog = await json<{ surfaces: Array<{ id: string; url: string; md?: string }> }>(catalogResponse);
+    const productSurfaces = catalog.surfaces.filter(({ url }) => url.includes("/products/"));
+    expect(productSurfaces).toHaveLength(activeProducts.results.length);
+    expect(productSurfaces.find(({ id }) => id === active.id)).toMatchObject({
+      url: `http://localhost/products/${encodedId}`,
+      md: `http://localhost/products/${encodedId}.md`,
+    });
+
+    const sitemapResponse = await worker.fetch("http://localhost/sitemap.xml");
+    expect(sitemapResponse.status).toBe(200);
+    expect(sitemapResponse.headers.get("content-type")).toContain("application/xml");
+    const sitemap = await sitemapResponse.text();
+    expect(sitemap.match(/<url>/g)).toHaveLength(activeProducts.results.length + 1);
+    expect(sitemap).toContain(`http://localhost/products/${encodedId}`);
+    expect(sitemap).not.toContain(".md");
+    expect(sitemap).not.toContain("/api/");
+
+    const inactive = await env.DB.prepare("SELECT id FROM products WHERE is_active = 0 ORDER BY id LIMIT 1")
+      .first<{ id: string }>();
+    if (inactive) {
+      const inactiveId = encodeURIComponent(inactive.id);
+      expect((await worker.fetch(`http://localhost/products/${inactiveId}`)).status).toBe(404);
+      expect((await worker.fetch(`http://localhost/products/${inactiveId}.md`)).status).toBe(404);
+      expect(sitemap).not.toContain(`/products/${inactiveId}`);
+      expect(catalog.surfaces.some(({ id }) => id === inactive.id)).toBe(false);
+    }
+  });
 });

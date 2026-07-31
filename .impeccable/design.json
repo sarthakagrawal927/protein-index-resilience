@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-01T00:00:00.000Z",
+  "title": "Design System: Protein Index",
+  "extensions": {
+    "colorMeta": {
+      "ink": { "role": "neutral", "displayName": "Evidence Ink", "canonical": "#17221c" },
+      "paper": { "role": "neutral", "displayName": "Catalog Paper", "canonical": "#fbfaf5" },
+      "green": { "role": "primary", "displayName": "Verified Green", "canonical": "#0c6b47" }
+    },
+    "shadows": [
+      { "name": "ambient-surface", "value": "0 20px 55px rgba(23, 34, 28, .07)", "purpose": "Primary container depth" }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "720px" }
+    ]
+  },
+  "components": [],
+  "narrative": {
+    "northStar": "The Evidence Ledger",
+    "overview": "Dense, restrained, auditable product comparison on warm paper surfaces.",
+    "keyCharacteristics": ["macro-first", "evidence-labelled", "responsive"],
+    "rules": [],
+    "dos": ["Preserve the five-macro hierarchy"],
+    "donts": ["Do not expose private or operational evidence" ]
+  }
+}
