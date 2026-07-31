@@ -1,6 +1,6 @@
 # Protein Index — PROJECT STATUS
 
-Last updated: 2026-07-19
+Last updated: 2026-08-01
 
 ## Why / What
 
@@ -53,6 +53,7 @@ the strict terminal-evidence gate above is actually satisfied.
 
 ## Timeline
 
+- 2026-08-01 — canonical active-product HTML and Markdown routes, an exhaustive runtime sitemap and agent catalog, route-correct metadata and Product structured data, and parity tests were completed without deploying or publishing data. Inactive products remain excluded and return 404; Trusted and Discovery evidence boundaries remain unchanged.
 - 2026-07-30 — made the canonical GitHub repository publicly readable. This
   changes source visibility only; it does not publish private R2 data, local
   evidence artifacts, credentials, or a project-wide software license.

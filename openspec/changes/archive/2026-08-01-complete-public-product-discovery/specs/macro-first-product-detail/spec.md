@@ -1,25 +1,4 @@
-# macro-first-product-detail Specification
-
-## Purpose
-
-Keep protein comparison focused on the five shopper-facing macros and protein
-density, without evidence-management detail in the consumer experience.
-## Requirements
-### Requirement: Direct macro comparison
-
-The catalog SHALL show protein, carbohydrate, fat, fibre, calories, and
-protein per 100 kcal directly for each product without requiring a product
-detail interaction.
-
-#### Scenario: Shopper scans a desktop result
-
-- **WHEN** a product is rendered in the catalog table
-- **THEN** its five macros and protein density are visible as table columns.
-
-#### Scenario: Shopper scans a mobile result
-
-- **WHEN** a product is rendered as a mobile card
-- **THEN** its five macros and protein density are visible in the card.
+## MODIFIED Requirements
 
 ### Requirement: Concise consumer product detail
 
@@ -34,3 +13,4 @@ The consumer product drawer, canonical HTML page, and Markdown mirror SHALL show
 
 - **WHEN** a canonical HTML page or Markdown mirror is rendered
 - **THEN** it contains the same public product identity, macro values, protein density, and evidence-state labels without private or operational detail.
+

@@ -8,6 +8,7 @@ Allow: /api/ai
 Allow: /api/health
 Allow: /api/coverage
 Allow: /api/products
+Allow: /products/
 
 Sitemap: https://protein.significanthobbies.com/sitemap.xml
 Allow: /llms-full.txt

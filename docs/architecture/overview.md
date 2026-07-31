@@ -99,15 +99,17 @@ not receive fake HTML 200s. Some surfaces are Worker routes
 | `/llms.txt` | Compact agent index | Worker route |
 | `/index.md` | Product brief in Markdown | Worker route |
 | `/api/ai` | JSON catalog of public surfaces | Worker route |
-| `/api/products/:id.md` | Per-product Markdown | Worker route |
-| `/sitemap.xml` | Sitemap | Worker route |
+| `/products/:id` | Canonical server-rendered product detail | Worker route |
+| `/products/:id.md` | Equivalent per-product Markdown | Worker route |
+| `/api/products/:id.md` | Compatibility product Markdown | Worker route |
+| `/sitemap.xml` | Runtime active-product sitemap | Worker route |
 | `/llms-full.txt` | Full agent brief | Static asset (`public/`) |
 | `/robots.txt` | Allow rules for agent paths | Static asset (`public/`) |
 
-`wrangler.jsonc` lists `/api/*`, `/llms.txt`, `/llms-full.txt`, `/index.md`, and
-`/sitemap.xml` under `assets.run_worker_first` so the Worker's dynamic surfaces
-win over the SPA HTML fallback. `/robots.txt` is a plain static asset and is not
-in that list.
+`wrangler.jsonc` lists `/api/*`, `/products/*`, `/llms.txt`, `/llms-full.txt`,
+`/index.md`, and `/sitemap.xml` under `assets.run_worker_first` so the Worker's
+dynamic surfaces win over the SPA HTML fallback. `/robots.txt` is a plain static
+asset and is not in that list.
 
 ## See also
 
