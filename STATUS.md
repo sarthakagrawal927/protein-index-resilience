@@ -4,7 +4,17 @@
 > [`PROJECT_STATUS.md`](PROJECT_STATUS.md). Update this file each working
 > session; update `PROJECT_STATUS.md` when PR-sized work completes.
 
-Last updated: 2026-08-01
+Last updated: 2026-09-07
+
+## Current checkpoint — September 7
+
+Fleet retains this project as an inactive reference. Nutrition provenance repairs
+are ported into the canonical source, preserving its discovery routes and data
+notices. Full local check and docs validation pass. Production revision and live
+acceptance remain unverified; no reactivation or release is implied.
+See [the source reconciliation and remaining acceptance](README.md#september-7-source-reconciliation).
+
+## Historical objective and work (not current authorization)
 
 ## Current objective
 

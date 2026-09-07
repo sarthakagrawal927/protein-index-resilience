@@ -449,3 +449,11 @@ the strict terminal-evidence gate above is actually satisfied.
     current source or retained current-label bytes. GTIN or catalog presence
     alone never marks identity verified; its source-checked evidence publication
     remains separate from the dashboard release.
+
+## 2026-09-07 — canonical nutrition evidence repair
+
+Ported the older checkout’s nutrition provenance and original source-record UI
+repairs into the canonical public source without replacing its discovery routes
+or data notices. Full check passes: 343 unit tests (including 14 focused dashboard tests), 62
+Worker tests, types and build; docs validation passes. Production provenance,
+release and live acceptance remain unverified; inactive Fleet intent is retained.

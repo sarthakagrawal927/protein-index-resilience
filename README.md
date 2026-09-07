@@ -250,3 +250,27 @@ system lives under [docs/](docs/index.md).
 
 Implementation work is tracked in `openspec/changes/` and durable product status
 lives in `PROJECT_STATUS.md`.
+
+## September 7 source reconciliation
+
+Fleet retains this project as an inactive reference. This source repair does not
+reactivate ingestion, publication, scheduled jobs or production deployment.
+
+The canonical public source remains `Significant-Hobbies/protein-index-resilience`.
+The older `protein-index` checkout has divergent history (19 unique commits at
+76e54ae versus three here at 122c7a2). Nutrition-detail repairs from 9c88bec and
+76e54ae are now ported here: evidence authority, source link and observation date
+stay beside macros; machine checks are distinguished from human review; derived
+density retains the same evidence limits; original catalog source records remain
+accessible without being misrepresented as verification. Unsafe links stay inert.
+Canonical discovery routes and third-party data notices are preserved.
+
+Remaining acceptance:
+
+- Verify the owning production revision before selecting a release; this source
+  comparison does not prove which revision is deployed.
+- After an authorized release, inspect real unverified and machine-checked
+  products, original sources and density calculations on desktop and mobile.
+- Resolve authoritative, affordable product data before considering reactivation.
+  Historical OpenSpec requirements remain historical/unqualified, not completed by
+  this UI repair. Do not restart producer or publisher workflows for this task.

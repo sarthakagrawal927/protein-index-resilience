@@ -436,12 +436,15 @@ function IngredientTree({ items }: { items: NormalizedIngredient[] }) {
   );
 }
 
-function ProductDrawer({ detail, loading, error, onClose }: {
+export function ProductDrawer({ detail, loading, error, onClose }: {
   detail: ProductDetailResponse | null;
   loading: boolean;
   error: string | null;
   onClose: () => void;
 }) {
+  const evidenceUrl = publicEvidenceUrl(detail?.nutritionEvidenceUrl ?? null);
+  const observedAt = detail?.nutrition.observedAt;
+  const observedDate = observedAt && Number.isFinite(Date.parse(observedAt)) ? new Date(observedAt).toISOString().slice(0, 10) : null;
   const closeRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLElement>(null);
   useEffect(() => {
@@ -482,6 +485,12 @@ function ProductDrawer({ detail, loading, error, onClose }: {
 
             <section>
               <div className="section-title"><div><h3>Macros · {nutritionBasisLabel(detail.nutrition.basis)}</h3><small>Per declared nutrition basis</small></div></div>
+              <div className="nutrition-evidence" aria-label="Nutrition evidence">
+                <p><strong>{metricEvidenceLabel(detail.nutritionStatus)}</strong></p>
+                <p>{detail.nutritionEvidenceAuthority === "human_reviewed_label" ? "Human-reviewed label." : detail.nutritionEvidenceAuthority === "authoritative_source" ? "Authoritative source record." : detail.nutritionEvidenceAuthority === "machine_verified_label" ? "Machine-checked label; not human reviewed." : detail.nutritionEvidenceAuthority === "first_party_structured_source" ? "Brand-provided structured data; not a human-reviewed label." : detail.nutritionEvidenceAuthority === "community" ? "Community-provided data." : "Evidence authority not recorded."}</p>
+                <p>{evidenceUrl ? <a href={evidenceUrl} target="_blank" rel="noreferrer">{detail.nutritionEvidenceKind === "label" ? "View original nutrition label" : "View nutrition source"} ↗</a> : "Original nutrition source link unavailable."}</p>
+                <small>{observedDate ? <>Observed <time dateTime={observedAt ?? undefined}>{observedDate}</time></> : "Observation date unavailable."}</small>
+              </div>
               <div className="nutrition-grid">
                 {[
                   ["Protein", detail.nutrition.proteinGrams, "g"],
@@ -495,9 +504,25 @@ function ProductDrawer({ detail, loading, error, onClose }: {
 
             <section>
               <h3>Protein density</h3>
+              <p>Calculated from the macros above; the same evidence status applies.</p>
               <div className="metric-grid">
                 <div><span>Protein / 100 kcal</span><strong><MetricValue result={detail.metrics.proteinPer100Calories} suffix=" g" /></strong></div>
               </div>
+            </section>
+
+            <section aria-label="Original catalog sources">
+              <h3>Original catalog sources</h3>
+              <p>Records associated with this product. These links do not verify the macros above.</p>
+              {detail.sourceRecords.length === 0 ? <p>No source records available.</p> : <ul>
+                {detail.sourceRecords.map((record) => {
+                  const url = publicEvidenceUrl(record.sourceUrl);
+                  const date = Number.isFinite(Date.parse(record.observedAt)) ? new Date(record.observedAt).toISOString().slice(0, 10) : null;
+                  return <li key={record.id}>
+                    {url ? <a href={url} target="_blank" rel="noreferrer">{record.source.replaceAll("_", " ")} ↗</a> : <span>{record.source.replaceAll("_", " ")} · source link unavailable</span>}
+                    {date ? <> · observed <time dateTime={record.observedAt}>{date}</time></> : " · observation date unavailable"}
+                  </li>;
+                })}
+              </ul>}
             </section>
           </>
         )}
