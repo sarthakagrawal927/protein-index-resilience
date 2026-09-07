@@ -457,3 +457,13 @@ repairs into the canonical public source without replacing its discovery routes
 or data notices. Full check passes: 343 unit tests (including 14 focused dashboard tests), 62
 Worker tests, types and build; docs validation passes. Production provenance,
 release and live acceptance remain unverified; inactive Fleet intent is retained.
+
+
+## 2026-09-07 — Canonical code release and hosted provenance acceptance
+
+Released source `51c0583792f2c7d3aac70efa5e3d8b1f314ec77e` through the maintained
+Fleet guard and existing preflight. Public desktop/mobile detail journeys passed
+with explicit authority, source and observation date beside macros; original
+label values and derived density agree. [Release receipt](docs/operations/release-2026-09-07.md)
+retains exact version/rollback and current-merchant drift limits. No data writes,
+migrations, new dependencies, or historical-alias changes occurred.

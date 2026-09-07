@@ -1,0 +1,205 @@
+{
+  "observedAt": "2026-09-07",
+  "canonicalRepository": "Significant-Hobbies/protein-index-resilience",
+  "sourceRevision": "51c0583792f2c7d3aac70efa5e3d8b1f314ec77e",
+  "worker": "protein-index",
+  "versionId": "ddbfef68-5616-467d-b2ce-44f7b7dab7e3",
+  "deploymentId": "e8676237-c42c-498b-bc34-93413ef341e0",
+  "trafficPercent": 100,
+  "sourceTag": "51c0583792f2c7d3aac70efa5e3d8b1f314ec77e",
+  "rollbackVersionId": "0797872f-6c49-4bec-a007-42dfe4a5981e",
+  "ciRuns": [
+    34121530575,
+    34121530565
+  ],
+  "preflight": {
+    "unitTests": 343,
+    "workerTests": 62,
+    "docsFiles": 18,
+    "build": true,
+    "startupProfile": true,
+    "dryRuns": 2,
+    "guardGates": 6,
+    "pendingMigrations": 0
+  },
+  "publicParity": {
+    "htmlMatchesBuild": true,
+    "script": "/assets/index-DhksCaOG.js"
+  },
+  "healthBeforeAfter": {
+    "products": 19016,
+    "latestPublishedAt": "2026-07-18T16:02:58.803Z",
+    "mutations": "local_only"
+  },
+  "browser": [
+    {
+      "width": 1280,
+      "id": "prd_24588cb3c30fa9ac42edfc2a",
+      "name": "Hydrolyzed Bovine Collagen",
+      "status": "unverified",
+      "authority": "community",
+      "evidence": "unverified nutrition\n\nCommunity-provided data.\n\nOriginal nutrition source link unavailable.\n\nObserved 2024-03-08",
+      "observed": "2024-03-08T09:54:41.000Z",
+      "nutrition": {
+        "calories": 40,
+        "proteinGrams": 10,
+        "carbohydrateGrams": null,
+        "sugarGrams": null,
+        "fatGrams": null,
+        "saturatedFatGrams": null,
+        "fibreGrams": null,
+        "sodiumMg": null,
+        "observedAt": "2024-03-08T09:54:41.000Z",
+        "labelVerifiedAt": null,
+        "basis": "unknown"
+      },
+      "density": 25,
+      "densityText": "Protein density\n\nCalculated from the macros above; the same evidence status applies.\n\nPROTEIN / 100 KCAL\n25 g",
+      "nutritionSource": null,
+      "sourceLinks": [
+        {
+          "label": "open food facts \u2197",
+          "url": "http://world-en.openfoodfacts.org/product/8908008553738/hydrolyzed-bovine-collagen-myfitfuel"
+        },
+        {
+          "label": "open food facts api \u2197",
+          "url": "https://world.openfoodfacts.org/product/8908008553738"
+        }
+      ],
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "width": 1280,
+      "id": "prd_61a2fac816e80007e6c2471f",
+      "name": "Protein Chef 10g Protein Roasted Soya Mixture Namkeen Healthy Snack - 40g",
+      "status": "machine_verified",
+      "authority": "machine_verified_label",
+      "evidence": "machine-verified from label\n\nMachine-checked label; not human reviewed.\n\nView original nutrition label \u2197\n\nObserved 2026-07-18",
+      "observed": "2026-07-18T17:09:41.182Z",
+      "nutrition": {
+        "calories": 378,
+        "proteinGrams": 26.1,
+        "carbohydrateGrams": 56.3,
+        "sugarGrams": 1.5,
+        "fatGrams": 8.1,
+        "saturatedFatGrams": 1.4,
+        "fibreGrams": 12.5,
+        "sodiumMg": 1290,
+        "observedAt": "2026-07-18T17:09:41.182Z",
+        "labelVerifiedAt": "2026-07-18T17:09:41.182Z",
+        "basis": "per_100g"
+      },
+      "density": 6.904761904761905,
+      "densityText": "Protein density\n\nCalculated from the macros above; the same evidence status applies.\n\nPROTEIN / 100 KCAL\n6.9 g",
+      "nutritionSource": "https://proteinchef.fit/cdn/shop/files/nivalues_36.png?v=1777886574",
+      "sourceLinks": [
+        {
+          "label": "protein chef india \u2197",
+          "url": "https://proteinchef.fit/products/10g-protein-soya-mixture?variant=48263937982719"
+        }
+      ],
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "width": 390,
+      "id": "prd_24588cb3c30fa9ac42edfc2a",
+      "name": "Hydrolyzed Bovine Collagen",
+      "status": "unverified",
+      "authority": "community",
+      "evidence": "unverified nutrition\n\nCommunity-provided data.\n\nOriginal nutrition source link unavailable.\n\nObserved 2024-03-08",
+      "observed": "2024-03-08T09:54:41.000Z",
+      "nutrition": {
+        "calories": 40,
+        "proteinGrams": 10,
+        "carbohydrateGrams": null,
+        "sugarGrams": null,
+        "fatGrams": null,
+        "saturatedFatGrams": null,
+        "fibreGrams": null,
+        "sodiumMg": null,
+        "observedAt": "2024-03-08T09:54:41.000Z",
+        "labelVerifiedAt": null,
+        "basis": "unknown"
+      },
+      "density": 25,
+      "densityText": "Protein density\n\nCalculated from the macros above; the same evidence status applies.\n\nPROTEIN / 100 KCAL\n25 g",
+      "nutritionSource": null,
+      "sourceLinks": [
+        {
+          "label": "open food facts \u2197",
+          "url": "http://world-en.openfoodfacts.org/product/8908008553738/hydrolyzed-bovine-collagen-myfitfuel"
+        },
+        {
+          "label": "open food facts api \u2197",
+          "url": "https://world.openfoodfacts.org/product/8908008553738"
+        }
+      ],
+      "overflow": false,
+      "errors": []
+    },
+    {
+      "width": 390,
+      "id": "prd_61a2fac816e80007e6c2471f",
+      "name": "Protein Chef 10g Protein Roasted Soya Mixture Namkeen Healthy Snack - 40g",
+      "status": "machine_verified",
+      "authority": "machine_verified_label",
+      "evidence": "machine-verified from label\n\nMachine-checked label; not human reviewed.\n\nView original nutrition label \u2197\n\nObserved 2026-07-18",
+      "observed": "2026-07-18T17:09:41.182Z",
+      "nutrition": {
+        "calories": 378,
+        "proteinGrams": 26.1,
+        "carbohydrateGrams": 56.3,
+        "sugarGrams": 1.5,
+        "fatGrams": 8.1,
+        "saturatedFatGrams": 1.4,
+        "fibreGrams": 12.5,
+        "sodiumMg": 1290,
+        "observedAt": "2026-07-18T17:09:41.182Z",
+        "labelVerifiedAt": "2026-07-18T17:09:41.182Z",
+        "basis": "per_100g"
+      },
+      "density": 6.904761904761905,
+      "densityText": "Protein density\n\nCalculated from the macros above; the same evidence status applies.\n\nPROTEIN / 100 KCAL\n6.9 g",
+      "nutritionSource": "https://proteinchef.fit/cdn/shop/files/nivalues_36.png?v=1777886574",
+      "sourceLinks": [
+        {
+          "label": "protein chef india \u2197",
+          "url": "https://proteinchef.fit/products/10g-protein-soya-mixture?variant=48263937982719"
+        }
+      ],
+      "overflow": false,
+      "errors": []
+    }
+  ],
+  "originalLabel": {
+    "url": "https://proteinchef.fit/cdn/shop/files/nivalues_36.png?v=1777886574",
+    "httpStatus": 200,
+    "sha256": "9fb28fd92755cb4eb2f1e88df3c1fa47a3e572b1324ae5b903d9d9508339fedf",
+    "visualMatch": {
+      "basis": "per_100g",
+      "proteinGrams": 26.1,
+      "calories": 378
+    },
+    "formula": "26.1 / 378 * 100 = 6.904761904761905"
+  },
+  "sourceChecks": [
+    {
+      "url": "https://world.openfoodfacts.org/product/8908008553738",
+      "status": 200,
+      "title": "Hydrolyzed Bovine Collagen \u2013 Myfitfuel"
+    },
+    {
+      "url": "https://proteinchef.fit/products/10g-protein-soya-mixture?variant=48263937982719",
+      "status": 200,
+      "currentTitle": "Protein Chef 10g Protein Roasted Dal Mix Namkeen",
+      "currentVariant": {
+        "id": 48263937982719,
+        "title": "40g",
+        "available": false
+      },
+      "limit": "Retained July product name differs from current merchant title; no current identity or availability guarantee"
+    }
+  ]
+}

@@ -127,6 +127,9 @@ procedure.
 
 ## Deployment
 
+See the [September 7 code-only release](release-2026-09-07.md) for the maintained
+guard invocation, exact deployed version and hosted provenance limits.
+
 The production topology is one Worker (`protein-index`), one D1 database
 (`protein-index`), and one private R2 bucket (`protein-index-labels`).
 

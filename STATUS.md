@@ -10,8 +10,10 @@ Last updated: 2026-09-07
 
 Fleet retains this project as an inactive reference. Nutrition provenance repairs
 are ported into the canonical source, preserving its discovery routes and data
-notices. Full local check and docs validation pass. Production revision and live
-acceptance remain unverified; no reactivation or release is implied.
+notices. The authorized canonical Worker release and desktop/mobile nutrition
+provenance checks passed; [release evidence](docs/operations/release-2026-09-07.md)
+records source tag, rollback, original-label comparison and dated-data limits.
+No source data or schema changed; the project remains inactive.
 See [the source reconciliation and remaining acceptance](README.md#september-7-source-reconciliation).
 
 ## Historical objective and work (not current authorization)
