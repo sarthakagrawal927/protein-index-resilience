@@ -1,6 +1,6 @@
 import { canonicalJson, sha256Hex } from "./evidence-decisions";
 
-export const IDENTITY_EVIDENCE_LIMITS = {
+const IDENTITY_EVIDENCE_LIMITS = {
   id: 256,
   sourceRecordKey: 512,
   evidenceUrl: 2_048,
@@ -94,7 +94,7 @@ function canonicalBinding(binding: IdentityEvidenceBinding): IdentityEvidenceBin
   };
 }
 
-export function canonicalIdentityEvidencePayload(
+function canonicalIdentityEvidencePayload(
   decision: IdentityEvidenceDecisionPayload,
 ): IdentityEvidenceDecisionPayload {
   return {

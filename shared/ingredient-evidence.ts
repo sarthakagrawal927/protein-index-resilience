@@ -44,7 +44,7 @@ export interface IngredientCandidateWarning {
   message: string;
 }
 
-export interface IngredientDecisionPayload {
+interface IngredientDecisionPayload {
   candidate: IngredientCandidate;
   reviewedText: string | null;
   normalizedIngredients: NormalizedIngredient[];

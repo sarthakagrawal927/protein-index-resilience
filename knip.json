@@ -1,0 +1,29 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "project": ["**/*.{ts,tsx,js,jsx,mjs,cjs,mts}"],
+  "ignore": [
+    "**/*.config.{js,ts,mjs,cjs}",
+    "**/blume.config.*",
+    "scripts/**",
+    "test/**",
+    "**/*.test.{ts,tsx,js,mjs}"
+  ],
+  "ignoreDependencies": [
+    "lightningcss"
+  ],
+  "ignoreBinaries": [
+    "blume"
+  ],
+  "ignoreIssues": {
+    "src/app/api/**/route.ts": ["exports", "types"],
+    "src/lib/actions/**": ["exports", "types"],
+    "lib/actions/**": ["exports", "types"],
+    "**/schema.ts": ["exports", "types"],
+    "**/db/schema*.ts": ["exports", "types"],
+    "**/commands/**": ["exports", "types"],
+    "**/agent-edge.*": ["exports", "types"],
+    "**/foundry-monitoring.ts": ["exports", "types"],
+    "**/analytics.ts": ["exports", "types"],
+    "**/api-timing.ts": ["exports", "types"]
+  }
+}

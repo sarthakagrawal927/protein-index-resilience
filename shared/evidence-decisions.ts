@@ -27,13 +27,13 @@ export interface VolumeNutritionCandidate extends NutritionCandidateBase {
 
 export type NutritionCandidate = MassNutritionCandidate | VolumeNutritionCandidate;
 
-export interface ReviewedMassNutritionProjection {
+interface ReviewedMassNutritionProjection {
   basis: "per_100g";
   nutritionPer100g: NutritionPer100g;
   nutritionPer100ml?: never;
 }
 
-export interface ReviewedVolumeNutritionProjection {
+interface ReviewedVolumeNutritionProjection {
   basis: "per_100ml";
   nutritionPer100ml: NutritionPer100g;
   nutritionPer100g?: never;
@@ -336,7 +336,7 @@ export function canonicalNutritionCandidate(candidate: NutritionCandidate): Nutr
     : { ...base, basis: candidate.basis as VolumeNutritionCandidate["basis"], nutritionPer100ml: canonicalNutrition };
 }
 
-export function canonicalReviewedNutritionProjection(
+function canonicalReviewedNutritionProjection(
   projection: ReviewedNutritionProjection,
 ): ReviewedNutritionProjection {
   const nutrition = projection.basis === "per_100g"
