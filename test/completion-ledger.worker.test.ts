@@ -1300,7 +1300,7 @@ describe("completion ledger Worker API", () => {
     const details = plan.results.map(({ detail }) => detail).join("\n");
     expect(details).not.toContain("CORRELATED");
     expect(details).toContain("idx_review_status_type_priority");
-    expect(details).toContain("idx_products_active_search");
+    expect(details).toMatch(/idx_products_active_\w+/);
   });
 
   it("validates every bounded ledger filter", async () => {

@@ -353,8 +353,42 @@ app.onError((error, c) => {
   return c.json(errorBody("internal_error", "The request could not be completed"), 500);
 });
 
+// Anonymous read surfaces are cached per-colo in the Workers Cache API for
+// five minutes (matching the Cache-Control already sent on text responses).
+// Catalog data only changes through the publication workflow, so short-lived
+// edge copies cannot diverge from anything a faster TTL would serve. This is
+// the primary guard against crawler pagination walks re-running the ~100k-row
+// catalog queries on every hit. Reads carry no auth, so the public corpus is
+// safe to share; mutations are local-only and never reach this path.
+const EDGE_CACHEABLE_PATH =
+  /^\/(api\/(products|ai|coverage)(\/|$)|products\/|sitemap\.xml|llms(-full)?\.txt|index\.md)/;
+
 export default {
-  fetch(request, env, ctx) {
-    return app.fetch(request, env, ctx);
+  async fetch(request, env, ctx) {
+    // `caches.default` is the Workers Cache API; the DOM CacheStorage typing
+    // in worker-configuration.d.ts does not declare it.
+    const url = new URL(request.url);
+    // Localhost bypasses the cache entirely: mutations only run there, and the
+    // operator/review flows must see post-mutation state immediately.
+    const local = ["localhost", "127.0.0.1", "::1"].includes(url.hostname);
+    const cache = (globalThis.caches as unknown as { default?: Cache } | undefined)?.default;
+    if (request.method !== "GET" || local || !cache || !EDGE_CACHEABLE_PATH.test(url.pathname)) {
+      return app.fetch(request, env, ctx);
+    }
+    const key = new Request(url.toString(), { method: "GET" });
+    const hit = await cache.match(key);
+    if (hit) {
+      const response = new Response(hit.body, hit);
+      response.headers.set("x-edge-cache", "HIT");
+      return response;
+    }
+    const response = await app.fetch(request, env, ctx);
+    if (response.status === 200) {
+      const stored = new Response(response.clone().body, response);
+      stored.headers.set("Cache-Control", "public, max-age=300");
+      ctx.waitUntil(cache.put(key, stored));
+      response.headers.set("x-edge-cache", "MISS");
+    }
+    return response;
   },
 } satisfies ExportedHandler<Env>;

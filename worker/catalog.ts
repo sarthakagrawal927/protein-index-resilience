@@ -290,6 +290,34 @@ function filtersFor(input: SearchInput): { sql: string; bindings: Array<string |
   return { sql: clauses.length ? ` WHERE ${clauses.join(" AND ")}` : "", bindings };
 }
 
+// The full SELECT_PRODUCT join set probes ~7 relations for every one of the
+// ~19k products — at ~100k D1 rows read per query that dominated the bill.
+// Page selection therefore runs on products alone (plus only the joins the
+// active filter or sort actually reads); the wide join then executes against
+// at most `pageSize` ids. COUNT likewise joins nothing it does not filter on.
+const NUTRITION_JOINS = `
+  LEFT JOIN nutrition_facts n ON n.product_id = p.id
+  LEFT JOIN current_verified_nutrition_facts verified_nutrition
+    ON verified_nutrition.product_id = p.id
+  LEFT JOIN current_machine_verified_nutrition_facts machine_nutrition
+    ON machine_nutrition.product_id = p.id`;
+const INGREDIENT_JOINS = `
+  LEFT JOIN ingredient_statements i ON i.product_id = p.id
+  LEFT JOIN current_verified_ingredient_statements verified_ingredients
+    ON verified_ingredients.product_id = p.id`;
+
+function filterJoins(input: SearchInput): string {
+  return (input.verification !== "all" ? NUTRITION_JOINS : "")
+    + (input.ingredientVerification !== "all" ? INGREDIENT_JOINS : "");
+}
+
+function pageJoins(input: SearchInput): string {
+  // protein_density sorts on the nutrition overlay expression, so page
+  // selection needs those joins even when no nutrition filter is active.
+  return (input.verification !== "all" || input.sort === "protein_density" ? NUTRITION_JOINS : "")
+    + (input.ingredientVerification !== "all" ? INGREDIENT_JOINS : "");
+}
+
 export async function searchProducts(db: D1Database, input: SearchInput): Promise<CatalogResponse> {
   const filters = filtersFor(input);
   const order = {
@@ -298,16 +326,11 @@ export async function searchProducts(db: D1Database, input: SearchInput): Promis
     name: "p.name_normalized, p.brand_normalized",
   }[input.sort] ?? "p.name_normalized";
   const offset = (input.page - 1) * input.pageSize;
-  const list = db.prepare(`${SELECT_PRODUCT}${filters.sql} ORDER BY ${order} LIMIT ? OFFSET ?`).bind(...filters.bindings, input.pageSize, offset);
-  const count = db.prepare(`SELECT COUNT(*) AS total FROM products p
-    LEFT JOIN nutrition_facts n ON n.product_id = p.id
-    LEFT JOIN ingredient_statements i ON i.product_id = p.id
-    LEFT JOIN current_verified_nutrition_facts verified_nutrition
-      ON verified_nutrition.product_id = p.id
-    LEFT JOIN current_machine_verified_nutrition_facts machine_nutrition
-      ON machine_nutrition.product_id = p.id
-    LEFT JOIN current_verified_ingredient_statements verified_ingredients
-      ON verified_ingredients.product_id = p.id${filters.sql}`).bind(...filters.bindings);
+  const pageIds = `SELECT p.id FROM products p${pageJoins(input)}${filters.sql} ORDER BY ${order} LIMIT ? OFFSET ?`;
+  const list = db.prepare(`${SELECT_PRODUCT} WHERE p.id IN (${pageIds}) ORDER BY ${order}`)
+    .bind(...filters.bindings, input.pageSize, offset);
+  const count = db.prepare(`SELECT COUNT(*) AS total FROM products p${filterJoins(input)}${filters.sql}`)
+    .bind(...filters.bindings);
   const batch = await db.batch<ProductRow | CountRow>([list, count]);
   const listResult = batch[0];
   const countResult = batch[1];
