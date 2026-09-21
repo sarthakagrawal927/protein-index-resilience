@@ -467,3 +467,25 @@ with explicit authority, source and observation date beside macros; original
 label values and derived density agree. [Release receipt](docs/operations/release-2026-09-07.md)
 retains exact version/rollback and current-merchant drift limits. No data writes,
 migrations, new dependencies, or historical-alias changes occurred.
+
+## 2026-09-21 — catalog read-path cost fix
+
+`high-signal` spend audit flagged `protein-index` D1 at ~10.8B rows read/mo
+(~15k rows/query avg). Root cause: every `/api/products` request ran a ~96k-row
+list query plus a ~102k-row count — all ~19k active products probed ~7 joined
+relations (the `current_*` evidence views materialize per query) before
+ORDER BY/LIMIT applied.
+
+Fixes shipped: two-phase pagination (page IDs selected on `products` plus only
+the joins the active filter/sort reads; wide join runs on ≤pageSize ids);
+COUNT joins only what its filters use; covering indexes
+`idx_products_active_name` / `idx_products_active_completeness` (migrations
+0020–0021, applied remote) stream name/completeness sorts at ~25 reads/page;
+anonymous GET surfaces cached in `caches.default` for 300s (localhost bypassed
+so local-only mutations stay immediately visible).
+
+Measured remotely: name/completeness page 1 = 25 rows (was ~38k); default
+protein-density request ≈103k (was ~198k). Remaining floor: the density sort
+key is a computed expression over the evidence joins — a denormalized
+catalog/sort table refreshed at publication is the follow-up if reads still
+matter. `pnpm check` green; worker deployed (version 6327b2b9).
