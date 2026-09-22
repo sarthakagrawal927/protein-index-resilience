@@ -31,6 +31,8 @@
       "bucket_name": "protein-index-labels"
     }
   ],
+  // Telemetry key: `wrangler secret put APP_HEALTH_INGEST_KEY` (a secret — do
+  // NOT add a vars entry; a same-name var replaces the secret on deploy).
   "observability": {
     "enabled": true,
     "logs": {

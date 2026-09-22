@@ -20,6 +20,7 @@ import {
 import { getCoverage } from "./coverage";
 import { verifyProductIdentity } from "./identity-evidence";
 import { listReviews, resolveReview } from "./reviews";
+import { observeRequest } from "./telemetry";
 import {
   listTerminalEvidence,
   recordTerminalEvidence,
@@ -365,6 +366,7 @@ const EDGE_CACHEABLE_PATH =
 
 export default {
   async fetch(request, env, ctx) {
+    const startedAt = Date.now();
     // `caches.default` is the Workers Cache API; the DOM CacheStorage typing
     // in worker-configuration.d.ts does not declare it.
     const url = new URL(request.url);
@@ -373,13 +375,16 @@ export default {
     const local = ["localhost", "127.0.0.1", "::1"].includes(url.hostname);
     const cache = (globalThis.caches as unknown as { default?: Cache } | undefined)?.default;
     if (request.method !== "GET" || local || !cache || !EDGE_CACHEABLE_PATH.test(url.pathname)) {
-      return app.fetch(request, env, ctx);
+      const response = await app.fetch(request, env, ctx);
+      observeRequest(request, response, startedAt, env, ctx, "bypass");
+      return response;
     }
     const key = new Request(url.toString(), { method: "GET" });
     const hit = await cache.match(key);
     if (hit) {
       const response = new Response(hit.body, hit);
       response.headers.set("x-edge-cache", "HIT");
+      observeRequest(request, response, startedAt, env, ctx, "hit");
       return response;
     }
     const response = await app.fetch(request, env, ctx);
@@ -389,6 +394,7 @@ export default {
       ctx.waitUntil(cache.put(key, stored));
       response.headers.set("x-edge-cache", "MISS");
     }
+    observeRequest(request, response, startedAt, env, ctx, "miss");
     return response;
   },
 } satisfies ExportedHandler<Env>;

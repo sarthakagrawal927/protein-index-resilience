@@ -59,6 +59,7 @@
     "knip:strict": "knip --reporter symbols"
   },
   "dependencies": {
+    "@saas-maker/app-health": "https://github.com/sass-maker/app-health/releases/download/node-v0.4.0/saas-maker-app-health-0.4.0.tgz",
     "hono": "^4.12.30",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"
