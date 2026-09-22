@@ -248,7 +248,7 @@ const SELECT_PRODUCT = `
     AND ingredient_terminal.notes = 'terminal_evidence_decision:' || ingredient_terminal_decision.id
   `;
 
-function filtersFor(input: SearchInput): { sql: string; bindings: Array<string | number> } {
+function filtersFor(input: SearchInput): { sql: string; bindings: Array<string | number>; filtered: boolean } {
   const clauses: string[] = ["p.is_active = 1"];
   const bindings: Array<string | number> = [];
   if (input.q) {
@@ -287,7 +287,12 @@ function filtersFor(input: SearchInput): { sql: string; bindings: Array<string |
   }
   clauses.push("p.completeness >= ?");
   bindings.push(input.minCompleteness);
-  return { sql: clauses.length ? ` WHERE ${clauses.join(" AND ")}` : "", bindings };
+  // The two always-present clauses (is_active, completeness floor) plus a
+  // vacuous floor mean the request is the unfiltered browse path — its total
+  // is served from the trigger-maintained catalog_counters row instead of a
+  // 19k-row COUNT.
+  const filtered = clauses.length > 2 || input.minCompleteness > 0;
+  return { sql: clauses.length ? ` WHERE ${clauses.join(" AND ")}` : "", bindings, filtered };
 }
 
 // The full SELECT_PRODUCT join set probes ~7 relations for every one of the
@@ -324,8 +329,10 @@ export async function searchProducts(db: D1Database, input: SearchInput): Promis
   const pageIds = `SELECT p.id FROM products p${filterJoins(input)}${filters.sql} ORDER BY ${order} LIMIT ? OFFSET ?`;
   const list = db.prepare(`${SELECT_PRODUCT} WHERE p.id IN (${pageIds}) ORDER BY ${order}`)
     .bind(...filters.bindings, input.pageSize, offset);
-  const count = db.prepare(`SELECT COUNT(*) AS total FROM products p${filterJoins(input)}${filters.sql}`)
-    .bind(...filters.bindings);
+  const count = filters.filtered
+    ? db.prepare(`SELECT COUNT(*) AS total FROM products p${filterJoins(input)}${filters.sql}`)
+      .bind(...filters.bindings)
+    : db.prepare("SELECT value AS total FROM catalog_counters WHERE name = 'active_products'");
   const batch = await db.batch<ProductRow | CountRow>([list, count]);
   const listResult = batch[0];
   const countResult = batch[1];

@@ -491,5 +491,9 @@ the canonical `product_density_sort_keys` view, plus covering index
 `idx_products_active_density` — the default sort now streams at ~25 reads/page
 instead of ~84k. `meta.changes` counts trigger writes in D1, so the
 review-resolve invariant asserts `inserted >= 1` (the literals-SELECT can only
-ever write one row directly). `pnpm check` green; worker deployed (version
-4779254f).
+ever write one row directly). Follow-up in the same release: `catalog_counters`
+(migration 0023) — a trigger-maintained active-product count serves the
+unfiltered `pagination.total` in 1 read instead of a 19k-row COUNT; filtered
+queries keep the real COUNT. Cold default request is now ~200 rows (was
+~198k); `pnpm check` green (343 + 65 tests); worker deployed (version
+50fc1977).

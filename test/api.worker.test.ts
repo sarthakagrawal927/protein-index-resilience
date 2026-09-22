@@ -2479,3 +2479,38 @@ describe("density sort key maintenance", () => {
     expect(drift?.mismatched).toBe(0);
   });
 });
+
+describe("catalog counter maintenance", () => {
+  it("tracks active product count through insert, deactivate, and delete", async () => {
+    const before = await env.DB.prepare(
+      "SELECT value FROM catalog_counters WHERE name = 'active_products'",
+    ).first<{ value: number }>();
+    const actual = await env.DB.prepare(
+      "SELECT COUNT(*) AS c FROM products WHERE is_active = 1",
+    ).first<{ c: number }>();
+    expect(before?.value).toBe(actual?.c);
+
+    const id = `counter-test-${Date.now()}`;
+    await env.DB.prepare(
+      `INSERT INTO products (id, brand, name, brand_normalized, name_normalized,
+        category, classifier_version, is_active, created_at, updated_at)
+       VALUES (?, 'B', 'Counter product', 'b', 'counter product', 'other', 'v1', 1, '2026-01-01', '2026-01-01')`,
+    ).bind(id).run();
+    let row = await env.DB.prepare(
+      "SELECT value FROM catalog_counters WHERE name = 'active_products'",
+    ).first<{ value: number }>();
+    expect(row?.value).toBe((before?.value ?? 0) + 1);
+
+    await env.DB.prepare("UPDATE products SET is_active = 0 WHERE id = ?").bind(id).run();
+    row = await env.DB.prepare(
+      "SELECT value FROM catalog_counters WHERE name = 'active_products'",
+    ).first<{ value: number }>();
+    expect(row?.value).toBe(before?.value);
+
+    await env.DB.prepare("DELETE FROM products WHERE id = ?").bind(id).run();
+    row = await env.DB.prepare(
+      "SELECT value FROM catalog_counters WHERE name = 'active_products'",
+    ).first<{ value: number }>();
+    expect(row?.value).toBe(before?.value);
+  });
+});
