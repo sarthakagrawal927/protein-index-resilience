@@ -1015,6 +1015,11 @@ export async function resolveReview(
   try {
     const results = await db.batch(statements);
     if (redundantTransaction || guardedNutritionTransaction) {
+      // D1's meta.changes includes rows written by triggers. The
+      // evidence_decisions insert fires density_key_evidence_decision_insert
+      // (migration 0022), which updates the product's sort key — a successful
+      // insert reports 2, not 1. The statement is a single-row literals SELECT
+      // gated by WHERE EXISTS, so 0 still means "no decision was written".
       const inserted = results[0]?.meta.changes ?? 0;
       const resolved = results[1]?.meta.changes ?? 0;
       if (inserted === 0 && resolved === 0) {
@@ -1022,7 +1027,7 @@ export async function resolveReview(
           .bind(id).first<{ status: string }>();
         return current?.status === "open" ? "invalid_candidate" : "conflict";
       }
-      if (inserted !== 1 || resolved !== 1) {
+      if (inserted < 1 || resolved !== 1) {
         throw new Error(`Evidence transaction invariant failed: inserted=${inserted}, resolved=${resolved}`);
       }
     }

@@ -2445,3 +2445,37 @@ describe("Worker catalog API", () => {
     }
   });
 });
+
+describe("density sort key maintenance", () => {
+  it("keeps sort_protein_density equal to the canonical key after evidence writes", async () => {
+    const product = await env.DB.prepare(
+      "SELECT id FROM products WHERE is_active = 1 ORDER BY id LIMIT 1",
+    ).first<{ id: string }>();
+    if (!product) throw new Error("Expected a seeded product");
+
+    // Force drift, then fire the nutrition-facts maintenance trigger with a
+    // no-op update; the trigger must restore the canonical key.
+    await env.DB.prepare("UPDATE products SET sort_protein_density = NULL WHERE id = ?")
+      .bind(product.id).run();
+    await env.DB.prepare("UPDATE nutrition_facts SET status = status WHERE product_id = ?")
+      .bind(product.id).run();
+
+    const row = await env.DB.prepare(
+      `SELECT p.sort_protein_density AS stored, k.sort_protein_density AS computed
+       FROM products p
+       LEFT JOIN product_density_sort_keys k ON k.product_id = p.id
+       WHERE p.id = ?`,
+    ).bind(product.id).first<{ stored: number | null; computed: number | null }>();
+    expect(row?.stored ?? null).toBe(row?.computed ?? null);
+  });
+
+  it("has no drifted density keys across the catalog", async () => {
+    const drift = await env.DB.prepare(
+      `SELECT COUNT(*) AS mismatched
+       FROM products p
+       LEFT JOIN product_density_sort_keys k ON k.product_id = p.id
+       WHERE p.sort_protein_density IS NOT k.sort_protein_density`,
+    ).first<{ mismatched: number }>();
+    expect(drift?.mismatched).toBe(0);
+  });
+});

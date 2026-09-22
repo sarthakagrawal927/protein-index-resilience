@@ -311,22 +311,17 @@ function filterJoins(input: SearchInput): string {
     + (input.ingredientVerification !== "all" ? INGREDIENT_JOINS : "");
 }
 
-function pageJoins(input: SearchInput): string {
-  // protein_density sorts on the nutrition overlay expression, so page
-  // selection needs those joins even when no nutrition filter is active.
-  return (input.verification !== "all" || input.sort === "protein_density" ? NUTRITION_JOINS : "")
-    + (input.ingredientVerification !== "all" ? INGREDIENT_JOINS : "");
-}
-
 export async function searchProducts(db: D1Database, input: SearchInput): Promise<CatalogResponse> {
   const filters = filtersFor(input);
   const order = {
-    protein_density: "CASE WHEN (verified_nutrition.product_id IS NOT NULL OR machine_nutrition.product_id IS NOT NULL OR n.status IN ('verified', 'unverified')) AND COALESCE(verified_nutrition.calories, machine_nutrition.calories, n.calories) > 0 AND COALESCE(verified_nutrition.protein_grams, machine_nutrition.protein_grams, n.protein_grams) >= 0 AND COALESCE(verified_nutrition.protein_grams, machine_nutrition.protein_grams, n.protein_grams) * 4.0 <= COALESCE(verified_nutrition.calories, machine_nutrition.calories, n.calories) THEN COALESCE(verified_nutrition.protein_grams, machine_nutrition.protein_grams, n.protein_grams) * 100.0 / COALESCE(verified_nutrition.calories, machine_nutrition.calories, n.calories) END DESC, p.name_normalized",
+    // Trigger-maintained denormalized key (migration 0022); the raw overlay
+    // expression must not return here — it forces ~4 probes per product.
+    protein_density: "p.sort_protein_density DESC, p.name_normalized",
     completeness: "p.completeness DESC, p.name_normalized",
     name: "p.name_normalized, p.brand_normalized",
   }[input.sort] ?? "p.name_normalized";
   const offset = (input.page - 1) * input.pageSize;
-  const pageIds = `SELECT p.id FROM products p${pageJoins(input)}${filters.sql} ORDER BY ${order} LIMIT ? OFFSET ?`;
+  const pageIds = `SELECT p.id FROM products p${filterJoins(input)}${filters.sql} ORDER BY ${order} LIMIT ? OFFSET ?`;
   const list = db.prepare(`${SELECT_PRODUCT} WHERE p.id IN (${pageIds}) ORDER BY ${order}`)
     .bind(...filters.bindings, input.pageSize, offset);
   const count = db.prepare(`SELECT COUNT(*) AS total FROM products p${filterJoins(input)}${filters.sql}`)

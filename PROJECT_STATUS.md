@@ -484,8 +484,12 @@ COUNT joins only what its filters use; covering indexes
 anonymous GET surfaces cached in `caches.default` for 300s (localhost bypassed
 so local-only mutations stay immediately visible).
 
-Measured remotely: name/completeness page 1 = 25 rows (was ~38k); default
-protein-density request ≈103k (was ~198k). Remaining floor: the density sort
-key is a computed expression over the evidence joins — a denormalized
-catalog/sort table refreshed at publication is the follow-up if reads still
-matter. `pnpm check` green; worker deployed (version 6327b2b9).
+Measured remotely: name/completeness page 1 = 25 rows (was ~38k); count 19k
+(was 102k). Follow-up landed in the same release: `sort_protein_density`
+column (migration 0022) maintained by triggers on every CASE input table via
+the canonical `product_density_sort_keys` view, plus covering index
+`idx_products_active_density` — the default sort now streams at ~25 reads/page
+instead of ~84k. `meta.changes` counts trigger writes in D1, so the
+review-resolve invariant asserts `inserted >= 1` (the literals-SELECT can only
+ever write one row directly). `pnpm check` green; worker deployed (version
+4779254f).
